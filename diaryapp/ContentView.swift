@@ -5,55 +5,70 @@
 //  Created by Joel Tan on 16/11/2024.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+  @Environment(\.modelContext) private var modelContext
+  @Query(sort: \DiaryEntry.timestamp, order: .reverse) private var entries: [DiaryEntry]
+  @State private var isNewEntryPresented = false
 
-    var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
-            .toolbar {
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
+  var body: some View {
+    NavigationStack {
+      List(entries) { entry in
+        NavigationLink(destination: EntryDetailView(entry: entry)) {
+          EntryPreviewCard(entry: entry)
         }
-    }
+      }
+      .navigationTitle("My Diary")
+      .toolbar {
+        ToolbarItem(placement: .primaryAction) {
+          Button(action: {
+            isNewEntryPresented = true
+          }) {
+            Label("New Entry", systemImage: "plus")
+          }
+        }
+      }
+      .sheet(isPresented: $isNewEntryPresented) {
+        // NewEntryView()
+      }
+    }.ignoresSafeArea()
+  }
+}
 
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
+struct EntryPreviewCard: View {
+  let entry: DiaryEntry
 
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
-            }
-        }
+  var body: some View {
+    VStack(alignment: .leading, spacing: 8) {
+      HStack {
+        Text(entry.timestamp.formatted(date: .abbreviated, time: .shortened))
+        Spacer()
+        Text(entry.weather)
+      }
+      .foregroundStyle(.secondary)
+
+      Text(entry.location)
+        .font(.caption)
+
+      Text(entry.text)
+        .lineLimit(2)
+        .font(.body)
     }
+    .padding(.vertical, 8)
+  }
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+  let previewConfig = ModelConfiguration(isStoredInMemoryOnly: true)
+  let container = try! ModelContainer(for: DiaryEntry.self, configurations: previewConfig)
+
+  // Insert sample data
+  for diary in DiaryEntry.sampleDiaries {
+    container.mainContext.insert(diary)
+  }
+
+  return ContentView()
+    .modelContainer(container)
 }
