@@ -59,3 +59,16 @@ extension DiaryEntry {
     ]
   }
 }
+
+extension DiaryEntry {
+  static func newEntryNow() -> DiaryEntry {
+    DiaryEntry(
+      timestamp: .now,
+      weather: "晴天",
+      location: "",
+      date: .now,
+      text: "",
+      images: []
+    )
+  }
+}

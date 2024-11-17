@@ -31,9 +31,9 @@ struct ContentView: View {
         }
       }
       .sheet(isPresented: $isNewEntryPresented) {
-        // NewEntryView()
+
       }
-    }.ignoresSafeArea()
+    }
   }
 }
 
@@ -44,8 +44,11 @@ struct EntryPreviewCard: View {
     VStack(alignment: .leading, spacing: 8) {
       HStack {
         Text(entry.timestamp.formatted(date: .abbreviated, time: .shortened))
+          .font(.subheadline)
         Spacer()
-        Text(entry.weather)
+        Label(entry.weather, systemImage: WeatherSymbol.symbolName(for: entry.weather))
+          .font(.subheadline)
+          .labelStyle(.titleAndIcon)
       }
       .foregroundStyle(.secondary)
 
