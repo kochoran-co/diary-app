@@ -31,7 +31,7 @@ struct ContentView: View {
         }
       }
       .sheet(isPresented: $isNewEntryPresented) {
-
+        NewEntry()
       }
     }
   }
