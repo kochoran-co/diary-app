@@ -5,18 +5,29 @@ struct EntryPreviewCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
-      HStack {
-        Text(entry.timestamp, formatter: DateFormatter.chineseDate)
-        Spacer()
-        Text(entry.location)
-        Image(systemName: WeatherSymbol.symbolName(for: entry.weather))
+      VStack {
+        HStack {
+          Text(entry.timestamp, formatter: DateFormatter.chineseDate)
+          Spacer()
+          Image(systemName: WeatherSymbol.symbolName(for: entry.weather))
+        }
+        HStack {
+          Text(entry.location)
+            .font(.subheadline)
+            .multilineTextAlignment(.leading)
+          Spacer()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
       }
       .foregroundStyle(.secondary)
-      .font(.subheadline)
 
       Text(entry.text)
         .lineLimit(2)
         .font(.body)
+
+      if !entry.images.isEmpty {
+        ImageCarouselView(images: entry.images, isEditing: false)
+      }
     }
     .padding(.vertical, 8)
   }

@@ -18,6 +18,7 @@ struct EntryDateLocationWeatherView: View {
             Image(systemName: "location")
               .foregroundColor(.secondary)
             TextField("Where did this happen?", text: $entry.location)
+              .foregroundColor(.secondary)
           }
           HStack(spacing: 4) {
             Menu {
