@@ -37,32 +37,6 @@ struct ContentView: View {
   }
 }
 
-struct EntryPreviewCard: View {
-  let entry: DiaryEntry
-
-  var body: some View {
-    VStack(alignment: .leading, spacing: 8) {
-      HStack {
-        Text(entry.timestamp.formatted(date: .abbreviated, time: .shortened))
-          .font(.subheadline)
-        Spacer()
-        Label(entry.weather, systemImage: WeatherSymbol.symbolName(for: entry.weather))
-          .font(.subheadline)
-          .labelStyle(.titleAndIcon)
-      }
-      .foregroundStyle(.secondary)
-
-      Text(entry.location)
-        .font(.caption)
-
-      Text(entry.text)
-        .lineLimit(2)
-        .font(.body)
-    }
-    .padding(.vertical, 8)
-  }
-}
-
 #Preview {
   let previewConfig = ModelConfiguration(isStoredInMemoryOnly: true)
   let container = try! ModelContainer(for: DiaryEntry.self, configurations: previewConfig)
